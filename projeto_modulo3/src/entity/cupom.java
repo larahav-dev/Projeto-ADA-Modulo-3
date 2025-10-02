@@ -4,17 +4,17 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public class Cupom {
-    private final  UUID codigo;
+    private final UUID codigo;
     private double valorDesconto;
     private boolean percentual;
     private LocalDate dataValidade;
     private boolean utilizado;
-    // criando o construtor, o cupom vai  nascer como não usado
+    // criando o construtor, o cupom vai nascer como não usado
 
-    public cupom(double valorDesconto, boolean percentual, LocalDate dataValidade, boolean utilizado) {
-            if (valorDesconto <= 0) {
-                throw new IllegalArgumentException("o valor do desconto deverá ser maior que 0");
-            }
+    public Cupom(double valorDesconto, boolean percentual, LocalDate dataValidade, boolean utilizado) {
+        if (valorDesconto <= 0) {
+            throw new IllegalArgumentException("o valor do desconto deverá ser maior que 0");
+        }
         if (dataValidade.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("A data de validade não pode ser no passado.");
         }
@@ -34,14 +34,15 @@ public class Cupom {
         return codigo;
     }
 
-    public double  getValorDesconto() {
+    public double getValorDesconto() {
         return valorDesconto;
     }
 
-    public isPercentual() {
-                return percentual;
+    public boolean isPercentual() {
+        return percentual;
 
-        }
+    }
+
     public LocalDate getDataValidade() {
         return dataValidade;
     }
