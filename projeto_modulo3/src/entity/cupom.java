@@ -42,5 +42,46 @@ public class Cupom {
                 return percentual;
 
         }
+    public LocalDate getDataValidade() {
+        return dataValidade;
+    }
 
+    public boolean isUtilizado() {
+        return utilizado;
+    }
+
+    // Setters (só se precisar alterar cupons no sistema)
+    public void setValorDesconto(double valorDesconto) {
+        if (valorDesconto <= 0) {
+            throw new IllegalArgumentException("O valor do desconto deve ser maior que zero.");
+        }
+        this.valorDesconto = valorDesconto;
+    }
+
+    public void setPercentual(boolean percentual) {
+        this.percentual = percentual;
+    }
+
+    public void setDataValidade(LocalDate dataValidade) {
+        if (dataValidade.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("A data de validade não pode ser no passado.");
+        }
+        this.dataValidade = dataValidade;
+    }
+
+    public void marcarComoUtilizado() {
+        this.utilizado = true;
+    }
+
+    @Override
+    public String toString() {
+        return "Cupom{" +
+                "codigo=" + codigo +
+                ", valorDesconto=" + valorDesconto +
+                (percentual ? "%" : " (fixo)") +
+                ", validade=" + dataValidade +
+                ", utilizado=" + utilizado +
+                '}';
+
+    }
 }
