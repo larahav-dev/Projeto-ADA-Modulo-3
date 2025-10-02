@@ -1,0 +1,1 @@
+package com.example.ecommerce.dto; public class CreateCustomerDto { public String name; public String document; public String email; }

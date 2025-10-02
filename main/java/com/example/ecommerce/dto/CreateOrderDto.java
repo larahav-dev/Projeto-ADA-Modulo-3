@@ -1,0 +1,1 @@
+package com.example.ecommerce.dto; public class CreateOrderDto { public Long customerId; }

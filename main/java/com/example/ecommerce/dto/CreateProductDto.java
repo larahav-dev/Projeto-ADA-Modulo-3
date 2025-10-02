@@ -1,0 +1,1 @@
+package com.example.ecommerce.dto; public class CreateProductDto { public String name; public String description; public double price; }
