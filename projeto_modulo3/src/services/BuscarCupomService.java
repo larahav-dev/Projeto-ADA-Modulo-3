@@ -17,5 +17,5 @@ public class BuscarCupomService implements CupomUseCase {
                 .filter(c -> c.getCodigo().equals(codigo))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Cupom não encontrado."));
-    }
-}
+        }
+}   
