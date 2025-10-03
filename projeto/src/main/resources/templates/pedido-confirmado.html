@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação de Pedido</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; }
+        h2 { color: #2c3e50; }
+        p { font-size: 16px; color: #333; }
+        .valor { font-weight: bold; color: #27ae60; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Pedido Confirmado</h2>
+    <p>Olá <span th:text="${nome}">Cliente</span>,</p>
+    <p>Seu pedido <strong>#<span th:text="${pedidoId}">0000</span></strong> foi finalizado com sucesso!</p>
+    <p>Valor total: <span class="valor">R$ <span th:text="${valorTotal}">0.00</span></span></p>
+    <p>Obrigado por comprar com a gente!</p>
+</div>
+</body>
+</html>
