@@ -1,16 +1,14 @@
 package service;
 
-import Entity.Cupom;
-import java.util.List;
+import entity.Cupom;
 import java.util.UUID;
 
-
-
-public class AtualizarCupom {
+public class AtualizarCupomService {
     private final BuscarCupomService buscarCupomService;
 
-    public AtualizarCupomService(List<Cupom> cupons) {
-        this.buscarCupomService = new BuscarCupomService(cupons);
+    // Recebe a dependência já construída
+    public AtualizarCupomService(BuscarCupomService buscarCupomService) {
+        this.buscarCupomService = buscarCupomService;
     }
 
     public void atualizar(UUID codigo, double novoValor, boolean percentual) {

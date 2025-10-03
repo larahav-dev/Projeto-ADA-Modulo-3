@@ -10,7 +10,7 @@ import java.util.UUID;
 public class ExpirarCupom {
     private final BuscarCupomService buscarCupomService;
 
-    public ExpirarCupomService(List<Cupom> cupons) {
+    public ExpirarCupom(List<Cupom> cupons) {
         this.buscarCupomService = new BuscarCupomService(cupons);
     }
 
