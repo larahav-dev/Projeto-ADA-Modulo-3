@@ -27,8 +27,8 @@ public class DataLoader {
         return args -> {
 
             // Clientes
-            clienteRepo.save(new Cliente(null, "Larah Oliveira", "12345678900", "larah@email.com"));
-            clienteRepo.save(new Cliente(null, "Carlos Mendes", "98765432100", "carlos@email.com"));
+            clienteRepo.save(new Cliente("Larah Oliveira", "12345678900", "larah@email.com"));
+            clienteRepo.save(new Cliente("Carlos Mendes", "98765432100", "carlos@email.com"));
 
             // Produtos
             produtoRepo.save(new Produto(null, "Notebook Dell", new BigDecimal("4500.00")));

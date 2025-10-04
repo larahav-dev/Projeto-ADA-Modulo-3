@@ -39,8 +39,8 @@ public class PedidoLoader {
             pedidoRepo.save(pedido);
 
             // Adiciona itens
-            ItemPedido item1 = new ItemPedido(produtos.get(0), 1, produtos.get(0).getPreco(), pedido);
-            ItemPedido item2 = new ItemPedido(produtos.get(1), 2, produtos.get(1).getPreco(), pedido);
+            ItemPedido item1 = new ItemPedido(produtos.get(0), 1, produtos.get(0).getPrecoBase(), pedido);
+            ItemPedido item2 = new ItemPedido(produtos.get(1), 2, produtos.get(1).getPrecoBase(), pedido);
             itemRepo.saveAll(List.of(item1, item2));
 
             pedido.getItens().addAll(List.of(item1, item2));
