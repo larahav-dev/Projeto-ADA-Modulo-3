@@ -8,38 +8,52 @@ import java.util.List;
 
 /**
  * DTO que representa os dados de um pedido para transferência entre camadas.
+ * Utilizado para criação, atualização e visualização de pedidos.
  */
 public class PedidoDTO {
 
-    /** Identificador único do pedido */
+    /** Identificador único do pedido. */
     private Long id;
 
-    /** Identificador do cliente que realizou o pedido */
+    /** Identificador do cliente associado ao pedido. */
     @NotNull(message = "O ID do cliente é obrigatório")
     private Long clienteId;
 
-    /** Data e hora em que o pedido foi criado */
+    /** Data e hora da criação do pedido. */
     private LocalDateTime dataCriacao;
 
-    /** Valor total do pedido, incluindo descontos */
+    /** Valor total do pedido, incluindo descontos. */
     private BigDecimal valorTotal;
 
-    /** Status atual do pedido (ex: ABERTO, PAGO, FINALIZADO) */
+    /** Status atual do pedido (ex: ABERTO, PAGO, FINALIZADO). */
     private String status;
 
-    /** Status atual do pagamento (ex: NAO_INICIADO, PAGO) */
+    /** Status do pagamento (ex: NAO_INICIADO, AGUARDANDO, PAGO). */
     private String statusPagamento;
 
-    /** Código do cupom de desconto aplicado, se houver */
+    /** Código do cupom de desconto aplicado, se houver. */
     private String cupomCodigo;
 
-    /** Lista de itens que compõem o pedido */
+    /** Lista de itens que compõem o pedido. */
     @NotNull(message = "A lista de itens não pode ser nula")
     @Valid
     private List<ItemPedidoDTO> itens;
 
+    /** Construtor padrão. */
     public PedidoDTO() {}
 
+    /**
+     * Construtor completo para facilitar a criação de instâncias.
+     *
+     * @param id identificador do pedido
+     * @param clienteId identificador do cliente
+     * @param dataCriacao data de criação
+     * @param valorTotal valor total do pedido
+     * @param status status do pedido
+     * @param statusPagamento status do pagamento
+     * @param cupomCodigo código do cupom aplicado
+     * @param itens lista de itens do pedido
+     */
     public PedidoDTO(Long id, Long clienteId, LocalDateTime dataCriacao, BigDecimal valorTotal,
                      String status, String statusPagamento, String cupomCodigo, List<ItemPedidoDTO> itens) {
         this.id = id;
@@ -53,6 +67,7 @@ public class PedidoDTO {
     }
 
     // Getters e Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

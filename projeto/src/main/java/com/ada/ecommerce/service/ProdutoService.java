@@ -1,7 +1,6 @@
 package com.ada.ecommerce.service;
 
 import com.ada.ecommerce.dto.ProdutoDTO;
-import com.ada.ecommerce.mapper.ProdutoMapper;
 import com.ada.ecommerce.model.Produto;
 import com.ada.ecommerce.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,10 @@ public class ProdutoService {
      * @return produto criado com ID preenchido
      */
     public ProdutoDTO cadastrar(ProdutoDTO dto) {
-        Produto produto = ProdutoMapper.toEntity(dto);
+        Produto produto = new Produto(dto.getNome(), dto.getDescricao(), dto.getPrecoBase());
         repository.save(produto);
-        return ProdutoMapper.toDTO(produto);
+
+        return new ProdutoDTO(produto.getId(), produto.getNome(), produto.getDescricao(), produto.getPrecoBase());
     }
 
     /**
@@ -38,7 +38,7 @@ public class ProdutoService {
      */
     public List<ProdutoDTO> listar() {
         return repository.findAll().stream()
-                .map(ProdutoMapper::toDTO)
+                .map(p -> new ProdutoDTO(p.getId(), p.getNome(), p.getDescricao(), p.getPrecoBase()))
                 .collect(Collectors.toList());
     }
 
@@ -58,7 +58,7 @@ public class ProdutoService {
         produto.setPrecoBase(dto.getPrecoBase());
         repository.save(produto);
 
-        return ProdutoMapper.toDTO(produto);
+        return new ProdutoDTO(produto.getId(), produto.getNome(), produto.getDescricao(), produto.getPrecoBase());
     }
 
     /**
@@ -69,7 +69,7 @@ public class ProdutoService {
      */
     public List<ProdutoDTO> buscarPorNome(String nome) {
         return repository.findByNomeContainingIgnoreCase(nome).stream()
-                .map(ProdutoMapper::toDTO)
+                .map(p -> new ProdutoDTO(p.getId(), p.getNome(), p.getDescricao(), p.getPrecoBase()))
                 .collect(Collectors.toList());
     }
 }

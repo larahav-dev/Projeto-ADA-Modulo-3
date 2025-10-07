@@ -6,41 +6,42 @@ import java.time.LocalDate;
 
 /**
  * DTO que representa os dados de um cupom de desconto.
+ * Utilizado para criação, edição e visualização de cupons.
  */
 public class CupomDTO {
 
-    /**
-     * Código único do cupom.
-     */
+    /** Código único do cupom. */
     @NotBlank(message = "O código do cupom é obrigatório")
     private String codigo;
 
-    /**
-     * Valor do desconto (percentual ou fixo).
-     */
+    /** Valor do desconto (percentual ou fixo). */
     @NotNull(message = "O valor do desconto é obrigatório")
     @DecimalMin(value = "0.01", message = "O desconto deve ser maior que zero")
     private BigDecimal valorDesconto;
 
-    /**
-     * Indica se o desconto é percentual (true) ou fixo (false).
-     */
+    /** Indica se o desconto é percentual (true) ou fixo (false). */
     private boolean percentual;
 
-    /**
-     * Data de expiração do cupom.
-     */
+    /** Data de expiração do cupom. */
     @NotNull(message = "A data de expiração é obrigatória")
     @Future(message = "A data de expiração deve ser futura")
     private LocalDate dataExpiracao;
 
-    /**
-     * Indica se o cupom já foi utilizado.
-     */
+    /** Indica se o cupom já foi utilizado. */
     private boolean utilizado;
 
+    /** Construtor padrão. */
     public CupomDTO() {}
 
+    /**
+     * Construtor completo para facilitar a criação de instâncias.
+     *
+     * @param codigo código do cupom
+     * @param valorDesconto valor do desconto
+     * @param percentual se é percentual
+     * @param dataExpiracao data de expiração
+     * @param utilizado se já foi utilizado
+     */
     public CupomDTO(String codigo, BigDecimal valorDesconto, boolean percentual, LocalDate dataExpiracao, boolean utilizado) {
         this.codigo = codigo;
         this.valorDesconto = valorDesconto;
@@ -50,6 +51,7 @@ public class CupomDTO {
     }
 
     // Getters e Setters
+
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
 

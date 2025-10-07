@@ -5,26 +5,39 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * DTO para transferência de dados de cliente.
+ * DTO para transferência de dados de cliente entre camadas da aplicação.
  */
 public class ClienteDTO {
 
+    /** Identificador único do cliente. */
     private Long id;
 
+    /** Nome completo do cliente. */
     @NotBlank(message = "O nome é obrigatório")
     @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")
     private String nome;
 
+    /** Documento oficial do cliente (CPF ou CNPJ). */
     @NotBlank(message = "O documento é obrigatório")
     @Size(min = 11, max = 14, message = "O documento deve ter entre 11 e 14 caracteres")
     private String documento;
 
+    /** Endereço de e-mail do cliente. */
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "E-mail inválido")
     private String email;
 
+    /** Construtor padrão. */
     public ClienteDTO() {}
 
+    /**
+     * Construtor completo para facilitar a criação de instâncias.
+     *
+     * @param id identificador do cliente
+     * @param nome nome completo
+     * @param documento CPF ou CNPJ
+     * @param email e-mail válido
+     */
     public ClienteDTO(Long id, String nome, String documento, String email) {
         this.id = id;
         this.nome = nome;
@@ -33,6 +46,7 @@ public class ClienteDTO {
     }
 
     // Getters e Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

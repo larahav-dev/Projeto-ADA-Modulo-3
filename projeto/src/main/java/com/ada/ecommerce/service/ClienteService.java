@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,8 +27,8 @@ public class ClienteService {
     public ClienteDTO cadastrar(ClienteDTO dto) {
         Cliente cliente = new Cliente(dto.getNome(), dto.getDocumento(), dto.getEmail());
         repository.save(cliente);
-        dto.setId(cliente.getId());
-        return dto;
+
+        return new ClienteDTO(cliente.getId(), cliente.getNome(), cliente.getDocumento(), cliente.getEmail());
     }
 
     /**
@@ -39,7 +38,11 @@ public class ClienteService {
      */
     public List<ClienteDTO> listar() {
         return repository.findAll().stream()
-                .map(c -> new ClienteDTO(c.getId(), c.getNome(), c.getDocumento(), c.getEmail()))
+                .map(cliente -> new ClienteDTO(
+                        cliente.getId(),
+                        cliente.getNome(),
+                        cliente.getDocumento(),
+                        cliente.getEmail()))
                 .collect(Collectors.toList());
     }
 
@@ -58,9 +61,7 @@ public class ClienteService {
         cliente.setEmail(dto.getEmail());
         repository.save(cliente);
 
-        dto.setId(cliente.getId());
-        dto.setDocumento(cliente.getDocumento()); // preserva o documento original
-        return dto;
+        return new ClienteDTO(cliente.getId(), cliente.getNome(), cliente.getDocumento(), cliente.getEmail());
     }
 
     /**

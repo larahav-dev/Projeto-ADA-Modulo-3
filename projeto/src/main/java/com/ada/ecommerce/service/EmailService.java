@@ -22,16 +22,14 @@ public class EmailService {
     private SpringTemplateEngine templateEngine;
 
     /**
-     * Envia um e-mail com conteúdo HTML diretamente (sem template).
+     * Envia um e-mail com conteúdo HTML diretamente (sem uso de template).
      *
      * @param destinatario endereço de e-mail do cliente
      * @param assunto título do e-mail
      * @param corpoHtml conteúdo HTML da mensagem
      */
     public void notificarHtml(String destinatario, String assunto, String corpoHtml) {
-        if (destinatario == null || destinatario.isBlank()) {
-            throw new IllegalArgumentException("Destinatário do e-mail não pode estar vazio.");
-        }
+        validarDestinatario(destinatario);
 
         try {
             MimeMessage mensagem = mailSender.createMimeMessage();
@@ -57,21 +55,16 @@ public class EmailService {
      * @param valorTotal valor total do pedido
      */
     public void notificarPedidoConfirmadoComTemplate(String destinatario, String assunto, String nome, Long pedidoId, String valorTotal) {
-        if (destinatario == null || destinatario.isBlank()) {
-            throw new IllegalArgumentException("Destinatário do e-mail não pode estar vazio.");
-        }
+        validarDestinatario(destinatario);
 
         try {
-            // Prepara o contexto do template
             Context context = new Context();
             context.setVariable("nome", nome);
             context.setVariable("pedidoId", pedidoId);
             context.setVariable("valorTotal", valorTotal);
 
-            // Renderiza o HTML do template
             String corpoHtml = templateEngine.process("email/pedido-confirmado", context);
 
-            // Envia o e-mail
             MimeMessage mensagem = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mensagem, true, "UTF-8");
 
@@ -82,6 +75,17 @@ public class EmailService {
             mailSender.send(mensagem);
         } catch (MessagingException e) {
             System.err.println("Erro ao enviar e-mail com template: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Valida se o destinatário do e-mail é válido.
+     *
+     * @param destinatario e-mail do destinatário
+     */
+    private void validarDestinatario(String destinatario) {
+        if (destinatario == null || destinatario.isBlank()) {
+            throw new IllegalArgumentException("Destinatário do e-mail não pode estar vazio.");
         }
     }
 }

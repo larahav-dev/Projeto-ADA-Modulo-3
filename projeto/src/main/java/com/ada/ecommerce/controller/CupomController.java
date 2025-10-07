@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * Controller responsável pelos endpoints de gerenciamento de cupons de desconto.
  */
+@Order(2)
 @RestController
 @RequestMapping("/api/cupons")
 @Tag(name = "Cupons", description = "Endpoints para gerenciamento e aplicação de cupons de desconto")
@@ -26,15 +28,21 @@ public class CupomController {
 
     /**
      * Cria um novo cupom de desconto.
+     *
+     * @param dto dados do cupom
+     * @return cupom criado
      */
     @PostMapping
     @Operation(summary = "Criar cupom", description = "Cria um novo cupom de desconto com código, valor e validade")
     public ResponseEntity<CupomDTO> criar(@Valid @RequestBody CupomDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cupomService.criar(dto));
+        CupomDTO criado = cupomService.criar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
     /**
      * Lista todos os cupons cadastrados.
+     *
+     * @return lista de cupons
      */
     @GetMapping
     @Operation(summary = "Listar cupons", description = "Retorna todos os cupons cadastrados no sistema")
@@ -44,15 +52,22 @@ public class CupomController {
 
     /**
      * Atualiza os dados de um cupom existente.
+     *
+     * @param codigo código do cupom
+     * @param dto dados atualizados
+     * @return cupom atualizado
      */
     @PutMapping("/{codigo}")
     @Operation(summary = "Atualizar cupom", description = "Atualiza os dados de um cupom existente pelo código")
     public ResponseEntity<CupomDTO> atualizar(@PathVariable String codigo, @Valid @RequestBody CupomDTO dto) {
-        return ResponseEntity.ok(cupomService.atualizar(codigo, dto));
+        CupomDTO atualizado = cupomService.atualizar(codigo, dto);
+        return ResponseEntity.ok(atualizado);
     }
 
     /**
      * Expira manualmente um cupom, tornando-o inválido.
+     *
+     * @param codigo código do cupom
      */
     @PatchMapping("/{codigo}/expirar")
     @Operation(summary = "Expirar cupom", description = "Marca o cupom como expirado, impedindo sua utilização")
@@ -63,6 +78,9 @@ public class CupomController {
 
     /**
      * Aplica um cupom a um pedido específico.
+     *
+     * @param pedidoId ID do pedido
+     * @param dto dados do cupom a aplicar
      */
     @PostMapping("/aplicar/{pedidoId}")
     @Operation(summary = "Aplicar cupom ao pedido", description = "Aplica um cupom válido ao pedido informado")

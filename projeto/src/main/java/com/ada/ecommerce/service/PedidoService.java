@@ -1,15 +1,14 @@
 package com.ada.ecommerce.service;
 
-import com.ada.ecommerce.dto.ItemPedidoDTO;
-import com.ada.ecommerce.dto.PedidoDTO;
+import com.ada.ecommerce.dto.*;
 import com.ada.ecommerce.model.*;
 import com.ada.ecommerce.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Serviço responsável pelas operações de negócio relacionadas a pedidos.
@@ -21,6 +20,7 @@ public class PedidoService {
     @Autowired private ClienteRepository clienteRepo;
     @Autowired private ProdutoRepository produtoRepo;
     @Autowired private CupomDescontoRepository cupomRepo;
+    @Autowired private ItemPedidoRepository itemRepo;
     @Autowired private EmailService emailService;
 
     /**
@@ -31,9 +31,57 @@ public class PedidoService {
                 .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
 
         Pedido pedido = new Pedido(cliente);
+        pedido.calcularValorTotal(); // explícito
         pedidoRepo.save(pedido);
-        dto.setId(pedido.getId());
-        return dto;
+
+        return toDTO(pedido);
+    }
+
+    /**
+     * Remove um item específico de um pedido e atualiza o valor total.
+     *
+     * @param pedidoId ID do pedido
+     * @param itemId ID do item a ser removido
+     * @return pedido atualizado como DTO
+     */
+    public PedidoDTO removerItem(Long pedidoId, Long itemId) {
+        Pedido pedido = pedidoRepo.findById(pedidoId)
+                .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+
+        ItemPedido item = itemRepo.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item não encontrado"));
+
+        if (!item.getPedido().getId().equals(pedidoId)) {
+            throw new IllegalArgumentException("Item não pertence ao pedido informado");
+        }
+
+        pedido.getItens().remove(item);
+        itemRepo.delete(item);
+
+        pedido.calcularValorTotal();
+        pedidoRepo.save(pedido);
+
+        return toDTO(pedido);
+    }
+
+    /**
+     * Lista todos os pedidos cadastrados como DTOs.
+     *
+     * @return lista de pedidos
+     */
+    public List<PedidoDTO> listar() {
+        return pedidoRepo.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retorna todos os pedidos como entidades.
+     *
+     * @return lista de pedidos completos
+     */
+    public List<Pedido> getAllPedidos() {
+        return pedidoRepo.findAll();
     }
 
     /**
@@ -140,43 +188,49 @@ public class PedidoService {
      * Usado para testes e demonstrações via endpoint /api/pedidos/inicial.
      */
     public void criarPedidoExemplo() {
-        // Seleciona o primeiro cliente cadastrado
         Cliente cliente = clienteRepo.findAll().stream().findFirst()
                 .orElseThrow(() -> new IllegalStateException("Nenhum cliente cadastrado"));
 
-        // Seleciona os dois primeiros produtos
         List<Produto> produtos = produtoRepo.findAll();
         if (produtos.size() < 2) throw new IllegalStateException("Produtos insuficientes");
 
-        // Recupera o cupom de exemplo
         CupomDesconto cupom = cupomRepo.findById("DESCONTO10")
                 .orElseThrow(() -> new IllegalStateException("Cupom não encontrado"));
 
-        // Cria o pedido
         Pedido pedido = new Pedido(cliente);
         pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
         pedido.setStatusPagamento(StatusPagamento.AGUARDANDO);
 
-        // Adiciona itens
         ItemPedido item1 = new ItemPedido(produtos.get(0), 1, produtos.get(0).getPrecoBase(), pedido);
         ItemPedido item2 = new ItemPedido(produtos.get(1), 2, produtos.get(1).getPrecoBase(), pedido);
         pedido.getItens().addAll(List.of(item1, item2));
         pedido.calcularValorTotal();
 
-        // Aplica cupom
         pedido.aplicarCupom(cupom);
         cupom.setUtilizado(true);
         cupomRepo.save(cupom);
 
-        // Salva pedido
         pedidoRepo.save(pedido);
 
-        // Envia e-mail de confirmação
         String html = "<h2>Pedido de Exemplo Criado</h2>" +
                 "<p>Olá " + cliente.getNome() + ",</p>" +
                 "<p>Seu pedido #" + pedido.getId() + " foi gerado com cupom aplicado.</p>" +
                 "<p>Valor total: <strong>R$ " + pedido.getValorTotal() + "</strong></p>";
 
         emailService.notificarHtml(cliente.getEmail(), "Pedido de Exemplo", html);
+    }
+
+    /**
+     * Converte entidade Pedido para DTO manualmente.
+     */
+    private PedidoDTO toDTO(Pedido pedido) {
+        PedidoDTO dto = new PedidoDTO();
+        dto.setId(pedido.getId());
+        dto.setClienteId(pedido.getCliente().getId());
+        dto.setDataCriacao(pedido.getDataCriacao());
+        dto.setStatus(pedido.getStatus().name());
+        dto.setStatusPagamento(pedido.getStatusPagamento().name());
+        dto.setValorTotal(pedido.getValorTotal());
+        return dto;
     }
 }

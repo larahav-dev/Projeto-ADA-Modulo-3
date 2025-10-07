@@ -11,7 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Cria pedidos automaticamente ao iniciar a aplicação.
+ * Gera pedidos automaticamente ao iniciar a aplicação.
+ * Útil para testes, demonstrações e desenvolvimento local.
  */
 @Configuration
 public class PedidoLoader {
@@ -25,20 +26,23 @@ public class PedidoLoader {
             ItemPedidoRepository itemRepo) {
 
         return args -> {
-            // Recupera cliente e produtos
+            // 🔍 Recupera cliente, produtos e cupom
             Cliente cliente = clienteRepo.findAll().stream().findFirst().orElse(null);
             List<Produto> produtos = produtoRepo.findAll();
             CupomDesconto cupom = cupomRepo.findById("DESCONTO10").orElse(null);
 
-            if (cliente == null || produtos.size() < 2 || cupom == null) return;
+            if (cliente == null || produtos.size() < 2 || cupom == null) {
+                System.out.println("Dados insuficientes para gerar pedido automático.");
+                return;
+            }
 
-            // Cria pedido
+            // 🧾 Cria pedido
             Pedido pedido = new Pedido(cliente);
             pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
             pedido.setStatusPagamento(StatusPagamento.AGUARDANDO);
             pedidoRepo.save(pedido);
 
-            // Adiciona itens
+            // 📦 Adiciona itens ao pedido
             ItemPedido item1 = new ItemPedido(produtos.get(0), 1, produtos.get(0).getPrecoBase(), pedido);
             ItemPedido item2 = new ItemPedido(produtos.get(1), 2, produtos.get(1).getPrecoBase(), pedido);
             itemRepo.saveAll(List.of(item1, item2));
@@ -46,15 +50,15 @@ public class PedidoLoader {
             pedido.getItens().addAll(List.of(item1, item2));
             pedido.calcularValorTotal();
 
-            // Aplica cupom
+            // 🎟️ Aplica cupom de desconto
             pedido.aplicarCupom(cupom);
             cupom.setUtilizado(true);
             cupomRepo.save(cupom);
 
-            // Atualiza pedido com valor final
+            // 💾 Atualiza pedido com valor final
             pedidoRepo.save(pedido);
 
-            System.out.println("Pedido gerado automaticamente para " + cliente.getNome());
+            System.out.println("✅ Pedido gerado automaticamente para " + cliente.getNome());
         };
     }
 }

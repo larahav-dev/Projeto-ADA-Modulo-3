@@ -26,6 +26,9 @@ public class CupomService {
 
     /**
      * Cria um novo cupom de desconto.
+     *
+     * @param dto dados do cupom
+     * @return cupom criado
      */
     public CupomDTO criar(CupomDTO dto) {
         CupomDesconto cupom = new CupomDesconto(
@@ -36,26 +39,39 @@ public class CupomService {
                 false
         );
         cupomRepo.save(cupom);
-        return dto;
+
+        return new CupomDTO(
+                cupom.getCodigo(),
+                cupom.getValorDesconto(),
+                cupom.isPercentual(),
+                cupom.getDataExpiracao(),
+                cupom.isUtilizado()
+        );
     }
 
     /**
      * Lista todos os cupons cadastrados.
+     *
+     * @return lista de cupons
      */
     public List<CupomDTO> listar() {
         return cupomRepo.findAll().stream()
-                .map(c -> new CupomDTO(
-                        c.getCodigo(),
-                        c.getValorDesconto(),
-                        c.isPercentual(),
-                        c.getDataExpiracao(),
-                        c.isUtilizado()
+                .map(cupom -> new CupomDTO(
+                        cupom.getCodigo(),
+                        cupom.getValorDesconto(),
+                        cupom.isPercentual(),
+                        cupom.getDataExpiracao(),
+                        cupom.isUtilizado()
                 ))
                 .collect(Collectors.toList());
     }
 
     /**
      * Atualiza os dados de um cupom existente.
+     *
+     * @param codigo código do cupom
+     * @param dto dados atualizados
+     * @return cupom atualizado
      */
     public CupomDTO atualizar(String codigo, CupomDTO dto) {
         CupomDesconto cupom = cupomRepo.findById(codigo)
@@ -66,11 +82,19 @@ public class CupomService {
         cupom.setDataExpiracao(dto.getDataExpiracao());
         cupomRepo.save(cupom);
 
-        return dto;
+        return new CupomDTO(
+                cupom.getCodigo(),
+                cupom.getValorDesconto(),
+                cupom.isPercentual(),
+                cupom.getDataExpiracao(),
+                cupom.isUtilizado()
+        );
     }
 
     /**
      * Expira manualmente um cupom.
+     *
+     * @param codigo código do cupom
      */
     public void expirar(String codigo) {
         CupomDesconto cupom = cupomRepo.findById(codigo)
@@ -82,6 +106,9 @@ public class CupomService {
 
     /**
      * Aplica um cupom a um pedido específico.
+     *
+     * @param pedidoId ID do pedido
+     * @param dto dados do cupom a aplicar
      */
     public void aplicarCupom(Long pedidoId, CupomAplicacaoDTO dto) {
         Pedido pedido = pedidoRepo.findById(pedidoId)
